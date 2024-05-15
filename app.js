@@ -39,7 +39,7 @@ io.sockets.on("connection", function (socket) {
   socket.on("register", function (username, roomID = "/") {
     let room = getRoom(roomID);
     username = username.trim();
-    if (room.usernameSet.has(username) || username === "system") {
+    if (room.usernameSet.has(username) || username === "系统") {
       socket.emit("conflict username");
     } else {
       room.usernameSet.add(username);
@@ -52,8 +52,8 @@ io.sockets.on("connection", function (socket) {
       socket.join(roomID);
       socket.emit("register success");
       let data = {
-        content: `${username} join the chat`,
-        sender: "system",
+        content: `${username} 加入聊天！`,
+        sender: "系统",
         type: "TEXT",
       };
       io.to(roomID).emit("message", data);
@@ -77,8 +77,8 @@ io.sockets.on("connection", function (socket) {
               room.users.delete(id);
               room.usernameSet.delete(user.username);
               kickMessage = {
-                content: `${user.username} kicked out of chat room`,
-                sender: "system",
+                content: `${user.username} 踢出聊天室！`,
+                sender: "系统",
                 type: "TEXT",
               };
               break;
@@ -97,8 +97,8 @@ io.sockets.on("connection", function (socket) {
       if (kickMessage) io.to(roomID).emit("message", kickMessage);
     } else {
       let data = {
-        content: `login has expired, please refresh the page or click change username`,
-        sender: "system",
+        content: `登录已过期，请刷新页面或点击[修改昵称]!`,
+        sender: "系统",
         type: "TEXT",
       };
       socket.emit("message", data);
@@ -118,8 +118,8 @@ io.sockets.on("connection", function (socket) {
           rooms.delete(roomID);
         }
         let data = {
-          content: `${username} left`,
-          sender: "system",
+          content: `${username} 已离开！`,
+          sender: "系统",
           type: "TEXT",
         };
         io.to(roomID).emit("message", data);
