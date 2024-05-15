@@ -4,7 +4,7 @@
     <meta charset="UTF-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1"/>
     <title>Chat Room</title>
-    <meta name="description" content="Online char room."/>
+    <meta name="description" content="Online Chat Room."/>
     <link rel="stylesheet" href="/style.css"/>
     <script src="/socket.io/socket.io.js"></script>
     <script src="/main.js"></script>
@@ -15,13 +15,13 @@
         </div>
         <div class="tool-bar">
             <input id="fileInput" type="file" style="display: none" onchange="uploadFile()">
-            <button onclick="document.getElementById('fileInput').click()">File</button>
-            <button onclick="clearMessage()">Clear</button>
-            <button onclick="changeUsername()">Change username</button>
+            <button onclick="document.getElementById('fileInput').click()">上传文件</button>
+            <button onclick="clearMessage()">清除屏幕</button>
+            <button onclick="changeUsername()">修改昵称</button>
         </div>
         <div class="panel">
             <input id="input" class="input-box" autofocus>
-            <button onclick="send()" class="send-button">Send</button>
+            <button onclick="send()" class="send-button">发送</button>
         </div>
 </div>
 
