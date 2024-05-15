@@ -57,7 +57,7 @@ function uploadFile() {
 }
 
 function changeUsername() {
-  printMessage("Please input your new username.");
+  printMessage("请输入新的用户昵称！！！.");
   registered = false;
 }
 
@@ -102,7 +102,7 @@ function char2color(c) {
   return `#${r.toString(16)}${g.toString(16)}${b.toString(16)}`;
 }
 
-function printMessage(content, sender = "system", type = "TEXT") {
+function printMessage(content, sender = "系统", type = "TEXT") {
   let html;
   let firstChar = sender[0];
   switch (type) {
@@ -171,7 +171,7 @@ function initSocket() {
     registered = false;
     localStorage.setItem("username", "");
     printMessage(
-      "The username is already been taken, please input a new username."
+      "用户昵称已被占用，请输入新的用户昵称！！！."
     );
   });
 }
@@ -201,6 +201,6 @@ window.onload = function () {
   if (username) {
     register();
   } else {
-    printMessage("Please input your username.");
+    printMessage("请输入您的用户昵称！！！.");
   }
 };
