@@ -57,7 +57,7 @@ function uploadFile() {
 }
 
 function changeUsername() {
-  printMessage("请输入新的用户昵称！！！.");
+  printMessage("请输入新的用户昵称！");
   registered = false;
 }
 
@@ -171,7 +171,7 @@ function initSocket() {
     registered = false;
     localStorage.setItem("username", "");
     printMessage(
-      "用户昵称已被占用，请输入新的用户昵称！！！."
+      "用户昵称已被占用，请输入新的用户昵称！"
     );
   });
 }
@@ -201,6 +201,6 @@ window.onload = function () {
   if (username) {
     register();
   } else {
-    printMessage("请输入您的用户昵称！！！.");
+    printMessage("请输入您的用户昵称！");
   }
 };
