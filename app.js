@@ -5,6 +5,7 @@ const serveStatic = require("serve-static");
 const uploadRouter = require("./routes/upload");
 const roomRouter = require("./routes/room");
 const {md2html} = require("./utils");
+const { log } = require("console");
 const app = express();
 const server = require("http").createServer(app);
 let io = require("socket.io")(server);
@@ -34,6 +35,16 @@ function getRoom(roomID) {
   }
   return room;
 }
+// 获取当前聊天室中的所有用户
+function getCurrentUsers(roomID) {
+  let room = getRoom(roomID);
+  let users = [];
+  // 遍历用户名集合
+  for (let username of room.usernameSet) {
+      users.push(username);
+  }
+  return users;
+}
 
 io.sockets.on("connection", function (socket) {
   socket.on("register", function (username, roomID = "/") {
@@ -51,21 +62,27 @@ io.sockets.on("connection", function (socket) {
       userID2roomID.set(socket.id, roomID);
       socket.join(roomID);
       socket.emit("register success");
+      let userinfo =  getCurrentUsers(roomID)
       let data = {
-        content: `${username} 加入聊天！`,
+        content: `${username},加入聊天！`,
         sender: "系统",
         type: "TEXT",
+        number:room.users.size,
+        userinfo:userinfo,
       };
+      
+      console.log(`聊天室 ${roomID} 内当前有 ${room.users.size} 个用户。`);
+     
       io.to(roomID).emit("message", data);
     }
   });
 
   socket.on("message", function (data, roomID = "/") {
-    let room = getRoom(roomID);
+    let room = getRoom(roomID);		
     if (room.users.has(socket.id)) {
       if (!data) return;
       if (data.content === undefined) return;
-      if (data.type === undefined) data.type = "TEXT";
+      if (data.type === undefined) data.type = "TEXT";	    
       let user = room.users.get(socket.id);
       let kickMessage = undefined;
       if (user.isAdmin) {
@@ -76,10 +93,13 @@ io.sockets.on("connection", function (socket) {
             if (user.username === kickedUser) {
               room.users.delete(id);
               room.usernameSet.delete(user.username);
+			  let userinfo = getCurrentUsers(roomID); // 获取当前在线用户信息
               kickMessage = {
-                content: `${user.username} 踢出聊天室！`,
+                content: `${user.username},踢出聊天室！`,
                 sender: "系统",
                 type: "TEXT",
+                number:room.users.size,				
+				userinfo: userinfo,
               };
               break;
             }
@@ -92,15 +112,20 @@ io.sockets.on("connection", function (socket) {
       data.sender = user.username;
       if (data.type === "TEXT") {
         data.content = md2html(data.content);
-      }
+      }	  
+	  console.log(`聊天室 ${roomID} 内当前有 ${room.users.size} 个用户。`);
       io.to(roomID).emit("message", data);
       if (kickMessage) io.to(roomID).emit("message", kickMessage);
     } else {
+	  let userinfo = getCurrentUsers(roomID);		
       let data = {
         content: `登录已过期，请刷新页面或点击[修改昵称]!`,
         sender: "系统",
         type: "TEXT",
+        number:room.users.size,
+        userinfo: userinfo,
       };
+      console.log(`聊天室 ${roomID} 内当前有 ${room.users.size} 个用户。`);
       socket.emit("message", data);
     }
   });
@@ -117,11 +142,15 @@ io.sockets.on("connection", function (socket) {
         if (room.users.size === 0) {
           rooms.delete(roomID);
         }
-        let data = {
-          content: `${username} 已离开！`,
+        let userinfo = getCurrentUsers(roomID);
+		let data = {
+          content: `${username} 已离开`,
           sender: "系统",
           type: "TEXT",
+          number:room.users.size,
+		  userinfo: userinfo,
         };
+        console.log(`聊天室 ${roomID} 内当前有 ${room.users.size} 个用户。`);
         io.to(roomID).emit("message", data);
       }
     }
