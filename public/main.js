@@ -3,9 +3,10 @@ let username = "";
 let registered = false;
 let roomID = window.location.pathname;
 let dialogElement;
+let usernumElement;
 let inputElement;
 let fileInputElement;
-
+let rooms = new Map();
 function filename2type(fileName) {
   let extension = fileName.split(".").pop().toLowerCase();
   let imageFormats = [
@@ -38,7 +39,17 @@ function filename2type(fileName) {
   }
   return "FILE";
 }
-
+function getRoom(roomID) {
+  let room = rooms.get(roomID);
+  if (!room) {
+    room = {
+      users: new Map(),
+      usernameSet: new Set(),
+    };
+    rooms.set(roomID, room);
+  }
+  return room;
+}
 function uploadFile() {
   let file = fileInputElement.files[0];
   let formData = new FormData();
@@ -73,7 +84,7 @@ function processInput(input) {
     case "":
       break;
     case "help":
-      printMessage("https://github.com/songquanpeng/chat-room", "System");
+      printMessage("https://github.com/songquanpeng/chat-room", "系统");
       break;
     case "clear":
       clearMessage();
@@ -102,7 +113,7 @@ function char2color(c) {
   return `#${r.toString(16)}${g.toString(16)}${b.toString(16)}`;
 }
 
-function printMessage(content, sender = "系统", type = "TEXT") {
+function printMessage(content, sender = "系统", type = "TEXT",number,userinfo) {
   let html;
   let firstChar = sender[0];
   switch (type) {
@@ -147,6 +158,11 @@ function printMessage(content, sender = "系统", type = "TEXT") {
   }
   dialogElement.insertAdjacentHTML('beforeend', html)
   dialogElement.scrollTop = dialogElement.scrollHeight;
+  if(number>0){
+    usernumElement.innerHTML = "";
+	usernumElement.insertAdjacentHTML('beforeend', `当前用户数[${number}] -- ${userinfo}`);
+  }
+  
 }
 
 function sendMessage(content, type = "TEXT") {
@@ -156,11 +172,18 @@ function sendMessage(content, type = "TEXT") {
   };
   socket.emit("message", data, roomID);
 }
-
+function sendMessage(content, type = "TEXT") {
+  let data = {
+    content,
+    type,
+  };
+  socket.emit("message", data, roomID);
+}
 function initSocket() {
   socket = io();
   socket.on("message", function (message) {
-    printMessage(message.content, message.sender, message.type);
+    console.log(message,'message');
+    printMessage(message.content, message.sender, message.type, message.number,message.userinfo);
   });
   socket.on("register success", function () {
     registered = true;
@@ -174,6 +197,19 @@ function initSocket() {
       "用户昵称已被占用，请输入新的用户昵称！"
     );
   });
+}
+// 添加关闭网站的函数
+function closeWebsite() {
+  if (confirm('确定要退出吗？')) {
+    if (navigator.userAgent.indexOf("Firefox") != -1 || navigator.userAgent.indexOf("Chrome") != -1) {
+      window.location.href = "about:blank";
+      window.close();
+    } else {
+      window.opener = null;
+      window.open("", "_self");
+      window.close();
+    };
+  }
 }
 
 function send() {
@@ -189,6 +225,7 @@ function send() {
 window.onload = function () {
   initSocket();
   dialogElement = document.getElementById("dialog");
+  usernumElement = document.getElementById("usernum");
   inputElement = document.getElementById("input");
   fileInputElement = document.getElementById("fileInput");
   inputElement.addEventListener("keydown", function (e) {
