@@ -1,28 +1,31 @@
 <!DOCTYPE html>
 <html lang="">
 <head>
-    <meta charset="UTF-8"/>
-    <meta name="viewport" content="width=device-width, initial-scale=1"/>
-    <title>Chat Room</title>
-    <meta name="description" content="Online Chat Room."/>
-    <link rel="stylesheet" href="/style.css"/>
-    <script src="/socket.io/socket.io.js"></script>
-    <script src="/main.js"></script>
+	<meta charset="UTF-8"/>
+	<meta name="viewport" content="width=device-width, initial-scale=1"/>
+	<title>Chat Room</title>
+	<meta name="description" content="Online Chat Room."/>
+	<link rel="stylesheet" href="/style.css"/>
+	<script src="/socket.io/socket.io.js"></script>
+	<script src="/main.js"></script>
 </head>
 <body>
+
 <div class="container">
-        <div id="dialog" class="dialog">
-        </div>
-        <div class="tool-bar">
-            <input id="fileInput" type="file" style="display: none" onchange="uploadFile()">
-            <button onclick="document.getElementById('fileInput').click()">上传文件</button>
-            <button onclick="clearMessage()">清除屏幕</button>
-            <button onclick="changeUsername()">修改昵称</button>
-        </div>
-        <div class="panel">
-            <input id="input" class="input-box" autofocus>
-            <button onclick="send()" class="send-button">发送</button>
-        </div>
+		<div id="dialog" class="dialog">
+		</div>		
+	<div class="tool-bar">
+		<input id="fileInput" type="file" style="display: none" onchange="uploadFile()">
+		<button onclick="document.getElementById('fileInput').click()">上传文件</button>
+		<button onclick="clearMessage()">清除屏幕</button>
+		<button onclick="changeUsername()">修改昵称</button>
+		<button class="exit" onclick="closeWebsite()">退出</button>
+		<span id="usernum" class="nickname"></span>
+	</div>
+    <div class="panel">
+        <input id="input" class="input-box" autofocus>
+        <button onclick="send()" class="send-button">发送</button>
+    </div>
 </div>
 
 </body>
